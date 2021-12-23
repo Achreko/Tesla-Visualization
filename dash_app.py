@@ -14,15 +14,19 @@ def legs_plot():
         pd = get_storage()[2]
         datetime = np.array(pd["datetimes"])
         values = np.array(pd["values"])
+        anomalies = np.array(pd["anomalies"])
     else:
         datetime = np.array([0])
-        values = np.array([[0]])
-        print("Test")
+        values = np.array([[0,0,0,0,0,0]])
+        anomalies = np.array([[0,0,0,0,0,0]])
 
+    sensor_list = ["L0", "L1", "L2", "R0", "R1", "R2"]
 
-    fig = go.Figure([go.Scatter(x = datetime, y = values[:,0],\
-        line = dict(color = 'firebrick', width = 4), name = 'L0')
-        ])
+    fig = go.Figure()
+    for idx, sensor in enumerate(sensor_list):
+        fig.add_trace(go.Scatter(x=datetime, y=values[:,idx], name=sensor, legendgrouptitle_text="Sensors", legendgroup="sensors"))
+        fig.add_trace(go.Scatter(x=datetime, y=values[:,idx][anomalies[:,idx] == True], name=sensor, line=dict(color="#FF0000"), legendgrouptitle_text="Anomalies", legendgroup="anomalies"))
+
     return fig
 
 def create_layout():
