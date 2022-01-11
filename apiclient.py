@@ -1,8 +1,18 @@
 import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 from datetime import datetime
 
 def get_new_data(patient_id):
-    res = requests.get(f"http://tesla.iem.pw.edu.pl:9080/v2/monitor/{patient_id}")
+
+    session = requests.Session()
+    retry = Retry(connect=3, backoff_factor=0.5)
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+
+    res = session.get(f"http://tesla.iem.pw.edu.pl:9080/v2/monitor/{patient_id}")
+    # res = requests.get(f"http://tesla.iem.pw.edu.pl:9080/v2/monitor/{patient_id}")
     js = res.json()
 
     name = js["firstname"] + " " + js["lastname"]

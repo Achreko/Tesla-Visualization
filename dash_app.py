@@ -9,9 +9,9 @@ from storage import get_storage
 
 app = dash.Dash()
 
-def legs_plot():
-    if 2 in get_storage():
-        pd = get_storage()[2]
+def legs_plot(id=1):
+    if id in get_storage():
+        pd = get_storage()[id]
         datetime = np.array(pd["datetimes"])
         values = np.array(pd["values"])
         anomalies = np.array(pd["anomalies"])
@@ -33,12 +33,26 @@ def create_layout():
     app.layout = html.Div(id = 'parent', children = [
         html.H1(id = 'H1', children = 'Tesla visualizer', style = {'textAlign': 'center',\
             'marginTop': 40, 'marginBottom': 40}), \
-                dcc.Graph(id = 'the_plot', figure = legs_plot()), \
-                dcc.Interval(id = 'interval', interval = 1000, n_intervals = 0)
+        dcc.Dropdown(
+            id='person-dropdown',
+            options=[
+                {'label': 'Janek Grzegorczyk', 'value': 1},
+                {'label': 'Elbieta Kochalska', 'value': 2},
+                {'label': 'Albert Lisowski', 'value': 3},
+                {'label': 'Ewelina Nosowska', 'value': 4},
+                {'label': 'Piotr Fokalski', 'value': 5},
+                {'label': 'Bartosz Moskalski', 'value': 6}
+            ],
+            value=1),\
+        dcc.Graph(id = 'the_plot', figure = legs_plot(1)), \
+        dcc.Interval(id = 'interval', interval = 1000, n_intervals = 0)
     ])
 
-@app.callback(Output(component_id='the_plot', component_property='figure'),
-[Input(component_id='interval', component_property='n_intervals')])
-def graph_update(n_intervals):
+@app.callback(
+    Output(component_id='the_plot', component_property='figure'),
+    Input(component_id='interval', component_property='n_intervals'),
+    Input('person-dropdown', 'value'))
+def graph_update(n_intervals, person_value):
     print(n_intervals)
-    return legs_plot()
+    return legs_plot(person_value)
+

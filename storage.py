@@ -34,6 +34,7 @@ def add_measurements(patient_name, patient_id, data):
 def expire_data(secs):
     st = get_storage()
     for pid, pd in st.items():
+        print("\n\nClearing data ----------\n\n")
         ts = time.time()
         while len(pd["_expire_ts"]) > 0 and pd["_expire_ts"][0] < (ts-secs):
             pd["datetimes"].pop(0)

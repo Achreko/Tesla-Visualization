@@ -8,10 +8,12 @@ stop_collector = False
 class DataCollectorThread(threading.Thread):
     def run(self):
         while(not stop_collector):
+            print("\n\nDownloading data-----------\n\n")
             for id in range(1,7):
                 (name, data) = get_new_data(id)
+                # time.sleep(0.01)
                 add_measurements(name, id, data)
-            expire_data(20)
+            expire_data(10)
             print(get_storage())
             time.sleep(1)
 
