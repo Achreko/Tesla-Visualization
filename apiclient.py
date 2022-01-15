@@ -12,7 +12,6 @@ def get_new_data(patient_id):
     session.mount('https://', adapter)
 
     res = session.get(f"http://tesla.iem.pw.edu.pl:9080/v2/monitor/{patient_id}")
-    # res = requests.get(f"http://tesla.iem.pw.edu.pl:9080/v2/monitor/{patient_id}")
     js = res.json()
 
     name = js["firstname"] + " " + js["lastname"]

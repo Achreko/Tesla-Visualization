@@ -9,7 +9,7 @@ import numpy as np
 import sqlite3
 import time
 
-from storage import convert_data_to_df
+from storage import convert_data_to_df, see_data
 
 
 
@@ -17,16 +17,10 @@ app = dash.Dash()
 
 def legs_plot(id=1, secs = 10):
     
-    # if id in get_storage():
     pd = get_user_data_by_secs(id, secs)
     datetime = np.array(pd["datetimes"])
     values = np.array(pd["values"])
     anomalies = np.array(pd["anomalies"])
-    # else:
-    #     datetime = np.array([0])
-    #     values = np.array([[0,0,0,0,0,0]])
-    #     anomalies = np.array([[0,0,0,0,0,0]])
-
     sensor_list = ["L0", "L1", "L2", "R0", "R1", "R2"]
 
     fig = go.Figure()
@@ -80,4 +74,5 @@ def get_user_data_by_secs(patient_id, secs):
     c.execute("SELECT * FROM USERS WHERE patient_id=? AND end_time>?", (patient_id,ts-secs,))
     print(f"\n\nGot user with id: {patient_id} from last {secs} seconds: \n\n")
     users = c.fetchall()
+    see_data(users)
     return convert_data_to_df(users)

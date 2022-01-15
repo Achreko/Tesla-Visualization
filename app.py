@@ -13,7 +13,6 @@ class DataCollectorThread(threading.Thread):
             for id in range(1,7):
                 (name, data) = get_new_data(id)
                 add_measurements(name, id, data)
-            get_user_data_by_secs(1, 5)
             expire_data(600)
             time.sleep(1)
         close_db_connection()
