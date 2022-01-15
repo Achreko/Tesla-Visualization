@@ -28,33 +28,81 @@ def add_measurements(patient_name, patient_id, data):
             end_time text
         );
         """)
+    if not is_in_db(patient_id, data["timestamp"]):
+        print(f"\n\nAdding {patient_name} to DB")
+        c.execute(f"""INSERT INTO USERS VALUES(
+            null,
+            {patient_id}, 
+            '{patient_name}',
+            '{data['datetime']}',
+            '{data['timestamp']}',
+            '{data['values']}',
+            '{data['anomalies']}',
+            '{time.time()}'
+        );""")
+        _conn.commit()
 
-    c.execute(f"""INSERT INTO USERS VALUES(
-        null,
-        {patient_id}, 
-        '{patient_name}',
-        '{data['datetime']}',
-        '{data['timestamp']}',
-        '{data['values']}',
-        '{data['anomalies']}',
-        '{time.time()}'
-    );""")
+def get_data(secs):
+    c = get_curs()
+    ts = time.time()
+    c.execute("SELECT * FROM USERS WHERE end_time>?", (ts-secs,))
+    print(f"\n\nGot users from last {secs} seconds: \n\n")
+    users = c.fetchall()
+    for user in users:
+        print(user)
+    return users
+
+def get_user_data_by_secs(patient_id, secs):
+    c = get_curs()
+    ts = time.time()
+    c.execute("SELECT * FROM USERS WHERE patient_id=? AND end_time>?", (patient_id,ts-secs,))
+    print(f"\n\nGot user with id: {patient_id} from last {secs} seconds: \n\n")
+    users = c.fetchall()
+    see_data(users)
+    return convert_data_to_df(users)
+
+def expire_data(secs):
+    c = get_curs()
+    ts = time.time()
+    c.execute("DELETE FROM USERS WHERE end_time<?", (ts-secs,))
     _conn.commit()
+
+def is_in_db(patient_id, timestamp):
+    c = get_curs()
+    c.execute("SELECT * FROM USERS WHERE patient_id=? AND timestamps=?", (patient_id, timestamp,))
+    row = c.fetchone()
+    return False if row is None else True
+
+def see_data(data):
+    for user in data:
+        print(f"\nid: {user[0]}")
+        print(f"\nPatient id: {user[1]}")
+        print(f"\nPatient name: {user[2]}")
+        print(f"\ndatetime: {user[3]}")
+        print(f"\nvalues: {user[5]}")
+        print(f"\nvalues : {(user[5][1:-1].split(', '))}")
+        print(f"\nanomalies: {user[6]}")
+        print(f"\nendtime: {user[7]}")
+        print(user)
     
+def convert_data_to_df(users):
+    pd = {
+             "patient_id": users[0][1],
+             "patient_name": users[0][2],
+             "datetimes": [],
+             "timestamps": [],
+             "values": [],
+             "anomalies": [],
+             "_expire_ts": []
+         }
+    for user in users:
+        pd["datetimes"].append(user[3])
+        pd["timestamps"].append(user[4])
+        pd["values"].append(list(map(float,user[5][1:-1].split(', '))))
+        pd["anomalies"].append(user[6][1:-1].split(', '))
+        pd["_expire_ts"].append(user[7])
+    return pd
 
-
-
-# def expire_data(secs):
-#     c = get_curs()
-#     for pid, pd in st.items():
-#         print("\n\nClearing data ----------\n\n")
-#         ts = time.time()
-#         while len(pd["_expire_ts"]) > 0 and pd["_expire_ts"][0] < (ts-secs):
-#             pd["datetimes"].pop(0)
-#             pd["timestamps"].pop(0)
-#             pd["values"].pop(0)
-#             pd["anomalies"].pop(0)
-#             pd["_expire_ts"].pop(0)
 
 def close_db_connection():
     _conn.close()
