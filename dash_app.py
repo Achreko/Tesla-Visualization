@@ -50,7 +50,7 @@ def create_layout():
                 {'label': 'Bartosz Moskalski', 'value': 6}
             ],
             value=1),\
-        html.Div(children = 'Select number of seconds to show'), \
+        html.Div(children = 'Select number of seconds to show (maximum 600 s): '), \
         daq.NumericInput(
             id='secs-num',
             min=0,
