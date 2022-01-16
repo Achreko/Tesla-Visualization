@@ -1,3 +1,4 @@
+from turtle import color
 import dash
 from dash import dcc
 from dash import html
@@ -23,9 +24,13 @@ def legs_plot(id=1, secs = 10):
     anomalies = np.array(pd["anomalies"])
     sensor_list = ["L0", "L1", "L2", "R0", "R1", "R2"]
 
+    color_list = ["brown", "blue", "green", "gray", "pink", "black"]
+
     fig = go.Figure()
+    fig.update_xaxes(title="Measurements time")
+    fig.update_yaxes(title="Pressure in % (100% = 1023)")
     for idx, sensor in enumerate(sensor_list):
-        fig.add_trace(go.Scatter(x=datetime, y=values[:,idx], name=sensor, legendgrouptitle_text="Sensors", legendgroup="sensors"))
+        fig.add_trace(go.Scatter(x=datetime, y=values[:,idx], name=sensor, legendgrouptitle_text="Sensors", legendgroup="sensors", line=dict(color=color_list[idx])))
         fig.add_trace(go.Scatter(x=datetime, y=values[:,idx][anomalies[:,idx] == "True"], name=sensor, line=dict(color="#FF0000"), legendgrouptitle_text="Anomalies", legendgroup="anomalies"))
 
     return fig
@@ -53,6 +58,7 @@ def create_layout():
             value=10,
             size=120
         ), \
+        html.Center("Graphical visualization of measurements for monitoring walking habbits and patterns"), \
         dcc.Graph(id = 'the_plot', figure = legs_plot(1, 10)), \
         dcc.Interval(id = 'interval', interval = 1000, n_intervals = 0)
     ])

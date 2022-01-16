@@ -19,7 +19,7 @@ def get_new_data(patient_id):
     return name, {
         "datetime": change_timestamp_to_datetime(js["trace"]["id"]),
         "timestamp": js["trace"]["id"],
-        "values": [ x["value"]/1023 for x in js["trace"]["sensors"] ],
+        "values": [ x["value"]/1023*100 for x in js["trace"]["sensors"] ],
         "anomalies": [ x["anomaly"] for x in js["trace"]["sensors"] ]
     }
 
