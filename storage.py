@@ -29,7 +29,6 @@ def add_measurements(patient_name, patient_id, data):
         );
         """)
     if not is_in_db(patient_id, data["timestamp"]):
-        print(f"\n\nAdding {patient_name} to DB")
         c.execute(f"""INSERT INTO USERS VALUES(
             null,
             {patient_id}, 
@@ -53,10 +52,6 @@ def is_in_db(patient_id, timestamp):
     c.execute("SELECT * FROM USERS WHERE patient_id=? AND timestamps=?", (patient_id, timestamp,))
     row = c.fetchone()
     return False if row is None else True
-
-def see_data(data):
-    for user in data:
-        print(user)
     
 def convert_data_to_df(users):
     pd = {

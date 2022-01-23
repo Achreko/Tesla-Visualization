@@ -9,7 +9,6 @@ class DataCollectorThread(threading.Thread):
     def run(self):
         init_storage()
         while(not stop_collector):
-            print("\n\nDownloading data-----------\n\n")
             for id in range(1,7):
                 (name, data) = get_new_data(id)
                 add_measurements(name, id, data)
