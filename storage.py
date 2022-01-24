@@ -7,6 +7,17 @@ def init_storage():
     _conn = sqlite3.connect('patients.db')
     _curs = _conn.cursor()
     _curs.execute("DROP TABLE IF EXISTS USERS")
+    _curs.execute("""CREATE TABLE IF NOT EXISTS USERS (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 
+        patient_id integer,
+        patient_name text,
+        datetimes text,
+        timestamps text,
+        val text,
+        anomalies text,
+        end_time text
+    );
+    """)
     _conn.commit()
     return _conn
 
@@ -17,17 +28,6 @@ def get_curs():
 def add_measurements(patient_name, patient_id, data):
     global _conn
     c = get_curs()
-    c.execute("""CREATE TABLE IF NOT EXISTS USERS (
-            id INTEGER PRIMARY KEY AUTOINCREMENT, 
-            patient_id integer,
-            patient_name text,
-            datetimes text,
-            timestamps text,
-            val text,
-            anomalies text,
-            end_time text
-        );
-        """)
     if not is_in_db(patient_id, data["timestamp"]):
         c.execute(f"""INSERT INTO USERS VALUES(
             null,

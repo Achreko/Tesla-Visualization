@@ -3,7 +3,6 @@ from dash import dcc
 from dash import html
 import plotly.graph_objects as go
 from dash.dependencies import Input, Output
-import dash_daq as daq
 import numpy as np
 import sqlite3
 import time
