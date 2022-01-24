@@ -14,6 +14,10 @@ app = dash.Dash()
 def legs_plot(id=1, secs = [0,10]):
     
     pd = get_user_data_by_secs(id, secs)
+    
+    if not pd:
+        return go.Figure()
+
     datetime = np.array(pd["datetimes"])
     values = np.array(pd["values"])
     anomalies = np.array(pd["anomalies"])

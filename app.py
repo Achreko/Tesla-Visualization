@@ -21,7 +21,6 @@ if __name__ == "__main__":
     
     collector = DataCollectorThread()
     collector.start()
-    time.sleep(1)
 
     create_layout()
 

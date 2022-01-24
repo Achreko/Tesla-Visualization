@@ -54,21 +54,24 @@ def is_in_db(patient_id, timestamp):
     return False if row is None else True
     
 def convert_data_to_df(users):
-    pd = {
-             "patient_id": users[0][1],
-             "patient_name": users[0][2],
-             "datetimes": [],
-             "timestamps": [],
-             "values": [],
-             "anomalies": [],
-             "_expire_ts": []
-         }
-    for user in users:
-        pd["datetimes"].append(user[3])
-        pd["timestamps"].append(user[4])
-        pd["values"].append(list(map(float,user[5][1:-1].split(', '))))
-        pd["anomalies"].append(user[6][1:-1].split(', '))
-        pd["_expire_ts"].append(user[7])
+    if not users:
+        pd = {}
+    else:
+        pd = {
+                "patient_id": users[0][1],
+                "patient_name": users[0][2],
+                "datetimes": [],
+                "timestamps": [],
+                "values": [],
+                "anomalies": [],
+                "_expire_ts": []
+            }
+        for user in users:
+            pd["datetimes"].append(user[3])
+            pd["timestamps"].append(user[4])
+            pd["values"].append(list(map(float,user[5][1:-1].split(', '))))
+            pd["anomalies"].append(user[6][1:-1].split(', '))
+            pd["_expire_ts"].append(user[7])
     return pd
 
 
